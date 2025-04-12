@@ -1,61 +1,62 @@
-# ESP32 Firmware Flashing Tool
+# ESP32 MicroPython Firmware Installer
 
-Este repositório contém dois scripts em Batch para facilitar o processo de detecção e flash de dispositivos ESP32 com o MicroPython.
+Este repositório contém dois scripts em Batch para facilitar o processo de detecção e gravação (flash) de dispositivos ESP32 com o MicroPython. Ele foi desenvolvido com foco na praticidade e usabilidade em ambientes Windows, especialmente para iniciantes em programação de microcontroladores.
 
 ## Scripts Disponíveis
 
-1. **ESP32_detector.bat** - Detecta automaticamente dispositivos ESP32 conectados ao computador.
-2. **ESP32_firmware_installer.bat** - Apaga a memória flash de um ESP32 e grava o firmware do MicroPython.
+1. **ESP32_detector.bat**  
+   Detecta automaticamente dispositivos ESP32 conectados ao computador, exibindo informações do chip e MAC.
 
-## Como Usar
+2. **ESP32_firmware_installer.bat**  
+   Apaga a memória flash de um ESP32 e grava o firmware do MicroPython, a partir de um arquivo `.bin`.
 
-### 1. Detectando a Porta e Chip com ESP32_detector.bat
+---
 
-O script **ESP32_detector.bat** permite que você encontre automaticamente as portas COM onde os dispositivos ESP32 estão conectados e exibe detalhes sobre o chip, incluindo o modelo e o endereço MAC.
+## Como Usar os Scripts
+
+### 1. Detectando o ESP32 com `ESP32_detector.bat`
+
+Este script automatiza a verificação de portas COM ativas, detectando quais delas possuem dispositivos ESP32 conectados.
 
 #### Passos:
-
-1. **Baixe o script `ESP32_detector.bat`** e execute-o.
-2. O script começará a procurar as portas seriais disponíveis.
-3. Ele testará cada porta serial para verificar se é um dispositivo ESP32.
-4. O script exibirá a porta COM e as informações do chip encontrado.
-
-### Configuração da Porta COM
-Após executar o **ESP32_detector.bat**, o script mostrará a porta correta onde seu dispositivo ESP32 está conectado, como no exemplo abaixo:
+1. **Baixe o script `ESP32_detector.bat`** e execute-o com duplo clique.
+2. O script fará a verificação do Python e do `esptool`. Caso estejam ausentes, tentará instalá-los.
+3. Em seguida, listará as portas COM e tentará identificar o chip conectado.
+4. Se o dispositivo for encontrado, ele exibirá algo como:
 
 ```
 Dispositivo ESP identificado!
 Porta: COM6
-Chip is ESP32
+Chip is ESP32-C3
 MAC: 40:4c:ca:xx:xx:xx
 ```
 
-Essa será a porta que você usará no próximo passo. **Certifique-se de anotar a porta COM** (por exemplo, `COM6`) para configurar no script de gravação de firmware.
+Essa será a porta que você usará no próximo script.
 
-### 2. Baixando o Firmware Correto
+---
 
-Antes de usar o script **ESP32_firmware_installer.bat**, você precisa do arquivo de firmware correto para o seu ESP32. Para isso:
+### 2. Preparando o Firmware
 
-1. **Baixe o firmware do MicroPython para ESP32** no site oficial ou de uma fonte confiável. O arquivo normalmente tem o nome **`ESP32_GENERIC-YYYYMMDD-vX.XX.X.bin`**.
-2. **Salve o arquivo de firmware na mesma pasta onde o script `ESP32_firmware_installer.bat` está localizado.**
-
-> **Dica**: Se você não tem o firmware, acesse o site oficial do MicroPython ou a página de lançamentos do GitHub do MicroPython para obter o firmware correto para o ESP32.
-
-### 3. Usando o Script `ESP32_firmware_installer.bat` para Gravar o Firmware
-
-Após detectar a porta e baixar o firmware, você pode usar o **ESP32_firmware_installer.bat** para apagar o flash do ESP32 e gravar o novo firmware.
+Antes de usar o script de instalação do firmware, você precisa obter o arquivo correto `.bin`.
 
 #### Passos:
+1. Acesse o site oficial do MicroPython: https://micropython.org/download/esp32/
+2. Baixe a versão compatível com seu modelo de ESP32 (como ESP32-C3 ou ESP32).
+3. Salve o arquivo `.bin` na mesma pasta onde estão os dois scripts `.bat`.
 
-1. **Abra o arquivo `ESP32_firmware_installer.bat`** em um editor de texto (como o Notepad) e configure a **porta COM** e o **nome do arquivo do firmware**:
-    - **COMPORT=COM6**: Substitua `COM6` pela porta COM que o **ESP32_detector.bat** indicou para você.
-    - **FIRMWARE=ESP32_GENERIC-20241129-v1.24.1.bin**: Substitua `ESP32_GENERIC-YYYYMMDD-vX.XX.X.bin` pelo nome correto do arquivo do firmware que você baixou.
+---
 
-2. **Execute o script `ESP32_firmware_installer.bat`**:
-    - Ele apagará a memória flash do ESP32 e gravará o firmware.
-    - Caso haja algum erro, o script exibirá uma mensagem de erro e pausará para que você possa corrigir.
+### 3. Gravando o Firmware com `ESP32_firmware_installer.bat`
 
-#### Exemplo de saída ao executar o `ESP32_firmware_installer.bat`:
+Este script apaga a memória e grava o firmware no ESP32.
+
+#### Passos:
+1. **Execute o `ESP32_firmware_installer.bat`** com duplo clique.
+2. O script pedirá duas informações:
+   - Porta COM (ex: `COM6`) → Use a que foi identificada no script anterior.
+   - Nome do firmware (ex: `ESP32_GENERIC-20241129-v1.24.1.bin`) → Deve estar na mesma pasta que o script.
+
+#### Exemplo de Execução:
 
 ```
 ========================================
@@ -70,22 +71,26 @@ Etapa 2: Gravando o firmware: ESP32_GENERIC-20241129-v1.24.1.bin
 
 =======================================
     Firmware gravado com sucesso!      
-Agora eh soh abrir o Thonny e testar :)  
 =======================================
 Pressione qualquer tecla para continuar...
 ```
 
 ---
 
-### Dicas Importantes
+## Dicas Importantes
 
-- **Alteração da Porta COM**: Quando você detectar seu dispositivo com o **ESP32_detector.bat**, altere a variável `COMPORT` no **ESP32_firmware_installer.bat** para a porta correta.
-- **Alteração do Arquivo Firmware**: No **ESP32_firmware_installer.bat**, altere a variável `FIRMWARE` para corresponder ao nome do arquivo de firmware que você baixou.
-- **Evite Erros de Conexão**: Se o dispositivo não for detectado ou se ocorrer um erro de gravação, certifique-se de que a porta COM está correta e que o dispositivo não está em uso por outro software.
+- **Python no PATH**: Ambos os scripts requerem o Python instalado e acessível pelo terminal. Caso o Python não esteja no PATH, o script abrirá o site oficial para download.
+- **Firmware na pasta correta**: O script de gravação só funcionará se o arquivo `.bin` estiver na mesma pasta.
+- **Erros comuns**:
+  - Porta COM errada → verifique no `ESP32_detector.bat`.
+  - Falha ao instalar o esptool → tente manualmente com `pip install esptool`.
+  - ESP32 não aparece → verifique drivers USB e conexão física.
 
 ---
 
 ## Como Contribuir
 
-- Se você encontrar algum problema ou desejar adicionar mais funcionalidades ao script, fique à vontade para abrir uma **issue** ou **pull request**.
-- **Contribuições são bem-vindas!** Se você tem ideias para melhorar o script ou adicionar suporte a mais modelos de ESP, por favor, compartilhe!
+- Encontrou um bug? Abra uma *issue* descrevendo o problema.
+- Tem uma sugestão de melhoria? Envie um *pull request*.
+- Este repositório é feito para ser útil, simples e didático. Toda contribuição é bem-vinda!
+
