@@ -5,13 +5,37 @@ echo         GRAVAR FIRMWARE ESP32
 echo ========================================
 echo.
 
+:: Verifica se o Python está instalado
+where python >nul 2>nul
+if errorlevel 1 (
+    echo Python nao foi encontrado no PATH.
+    echo Abrindo a pagina oficial do Python para instalacao...
+    start https://www.python.org/downloads/
+    pause
+    exit /b
+)
+
+:: Verifica se o esptool está instalado
+echo Verificando se o esptool esta instalado...
+python -c "import esptool" >nul 2>nul
+if errorlevel 1 (
+    echo O esptool nao foi encontrado. Tentando instalar automaticamente...
+    pip install esptool
+    if errorlevel 1 (
+        echo Falha ao instalar o esptool. Instale manualmente com:
+        echo pip install esptool
+        pause
+        exit /b
+    )
+)
+
 :: Define a COM port e o arquivo do firmware
 set COMPORT=COM6
 set FIRMWARE=ESP32_GENERIC-20241129-v1.24.1.bin
 
 :: Verifica se o firmware existe
 if not exist "%~dp0%FIRMWARE%" (
-    echo ERRO: Arquivo %FIRMWARE% não encontrado na pasta atual.
+    echo ERRO: Arquivo %FIRMWARE% nao encontrado na pasta atual.
     pause
     exit /b
 )
@@ -19,6 +43,7 @@ if not exist "%~dp0%FIRMWARE%" (
 :: Vai para a pasta onde está o script e o firmware
 cd /d "%~dp0"
 
+echo.
 echo Etapa 1: Apagando a memoria flash do ESP32...
 python -m esptool --port %COMPORT% erase_flash
 if errorlevel 1 (

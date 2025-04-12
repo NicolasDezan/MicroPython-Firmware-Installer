@@ -5,23 +5,32 @@ echo      DETECCAO DE DISPOSITIVOS ESP
 echo ==========================================
 echo.
 
-:: Verifica se o esptool esta instalado
+:: Verifica se o Python está instalado
 where python >nul 2>nul
 if errorlevel 1 (
-    echo Python nao encontrado no PATH. Instale o Python primeiro.
+    echo Python nao foi encontrado no PATH.
+    echo Abrindo a pagina oficial do Python para instalacao...
+    start https://www.python.org/downloads/
     pause
     exit /b
 )
 
+:: Tenta importar o esptool, instala se nao tiver
+echo Verificando se o esptool esta instalado...
 python -c "import esptool" >nul 2>nul
 if errorlevel 1 (
-    echo O esptool nao esta instalado.
-    echo Instale com: pip install esptool
-    pause
-    exit /b
+    echo O esptool nao foi encontrado. Tentando instalar automaticamente...
+    pip install esptool
+    if errorlevel 1 (
+        echo Falha ao instalar o esptool. Verifique sua conexao com a internet ou instale manualmente com:
+        echo pip install esptool
+        pause
+        exit /b
+    )
 )
 
 :: Lista portas seriais
+echo.
 echo Procurando portas seriais...
 python -m serial.tools.list_ports > portas.txt
 
@@ -32,7 +41,7 @@ for /f "tokens=1,* delims= " %%a in (portas.txt) do (
     set porta=%%a
     echo Testando !porta!...
 
-    :: Tenta detectar chip ESP (atualmente focado no C3, mas pode trocar depois)
+    :: Tenta detectar chip ESP (atualmente focado no C3, pode ajustar o --chip se quiser outro)
     python -m esptool --chip esp32c3 --port !porta! flash_id > resultado.txt 2>nul
 
     findstr /C:"Detected" resultado.txt >nul
